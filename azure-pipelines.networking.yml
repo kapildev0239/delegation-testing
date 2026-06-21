@@ -1,0 +1,121 @@
+# VNet + 3 subnets (AKS, VM, App Gateway) – standalone networking deployment.
+# Triggers on changes to networking/ or the shared vnet module.
+# Backend state: networking.tfstate (separate from other deployments).
+# Approvals: Pipelines → Environments → dev → Approvals and checks.
+
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - 'networking/**'
+      - 'modules/vnet/**'
+      - 'azure-pipelines.networking.yml'
+
+variables:
+  - group: iac-deployment-dev-vg
+
+stages:
+  - stage: Plan
+    displayName: "Networking - Terraform Plan"
+    jobs:
+      - job: TerraformPlan
+        displayName: "Init and Plan"
+        pool:
+          name: fc-agent-pool
+        steps:
+          - checkout: self
+            displayName: "Checkout repository"
+
+          - task: TerraformTaskV4@4
+            displayName: "Terraform init"
+            inputs:
+              provider: "azurerm"
+              command: "init"
+              workingDirectory: "$(Build.SourcesDirectory)/networking"
+              backendServiceArm: "$(AZURE_SERVICE_CONNECTION)"
+              backendAzureRmResourceGroupName: "BIMPAY-TF-STATE"
+              backendAzureRmStorageAccountName: "bimpaytfstate"
+              backendAzureRmContainerName: "tfstate"
+              backendAzureRmKey: "networking.tfstate"
+
+          - task: Bash@3
+            displayName: "Terraform validate"
+            inputs:
+              targetType: "inline"
+              script: |
+                cd $(Build.SourcesDirectory)/networking
+                terraform validate
+
+          - task: TerraformTaskV4@4
+            displayName: "Terraform plan"
+            inputs:
+              provider: "azurerm"
+              command: "plan"
+              workingDirectory: "$(Build.SourcesDirectory)/networking"
+              environmentServiceNameAzureRM: "$(AZURE_SERVICE_CONNECTION)"
+              commandOptions: "-out=tfplan -input=false"
+
+          - task: CopyFiles@2
+            displayName: "Copy plan artifact"
+            inputs:
+              SourceFolder: "$(Build.SourcesDirectory)/networking"
+              Contents: "tfplan"
+              TargetFolder: "$(Build.ArtifactStagingDirectory)/tfplan-networking"
+              flattenFolders: true
+
+          - publish: "$(Build.ArtifactStagingDirectory)/tfplan-networking"
+            artifact: tfplan-networking
+            displayName: "Publish Terraform plan"
+
+  - stage: Apply
+    displayName: "Networking - Terraform Apply"
+    dependsOn: Plan
+    condition: succeeded()
+    jobs:
+      - deployment: TerraformApply
+        displayName: "Apply (approval required)"
+        timeoutInMinutes: 60
+        pool:
+          name: fc-agent-pool
+        environment: dev
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                  displayName: "Checkout repository"
+
+                - download: current
+                  artifact: tfplan-networking
+                  displayName: "Download plan artifact"
+
+                - task: CopyFiles@2
+                  displayName: "Copy plan to working directory"
+                  inputs:
+                    SourceFolder: "$(Pipeline.Workspace)/tfplan-networking"
+                    Contents: "**"
+                    TargetFolder: "$(Build.SourcesDirectory)/networking"
+                    flattenFolders: true
+
+                - task: TerraformTaskV4@4
+                  displayName: "Terraform init"
+                  inputs:
+                    provider: "azurerm"
+                    command: "init"
+                    workingDirectory: "$(Build.SourcesDirectory)/networking"
+                    backendServiceArm: "$(AZURE_SERVICE_CONNECTION)"
+                    backendAzureRmResourceGroupName: "BIMPAY-TF-STATE"
+                    backendAzureRmStorageAccountName: "bimpaytfstate"
+                    backendAzureRmContainerName: "tfstate"
+                    backendAzureRmKey: "networking.tfstate"
+
+                - task: TerraformTaskV4@4
+                  displayName: "Terraform apply"
+                  inputs:
+                    provider: "azurerm"
+                    command: "apply"
+                    workingDirectory: "$(Build.SourcesDirectory)/networking"
+                    environmentServiceNameAzureRM: "$(AZURE_SERVICE_CONNECTION)"
+                    commandOptions: "-auto-approve tfplan"

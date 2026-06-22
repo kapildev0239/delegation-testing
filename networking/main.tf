@@ -1,9 +1,11 @@
-data "azurerm_resource_group" "main" {
-  name = var.resource_group_name
+resource "azurerm_resource_group" "main" {
+  name     = var.resource_group_name
+  location = var.location
+  tags     = var.tags
 }
 
 locals {
-  location = coalesce(var.location, data.azurerm_resource_group.main.location)
+  location = var.location
   common_tags = merge(var.tags, {
     environment  = var.environment
     "CostCenter" = var.cost_center
@@ -16,8 +18,8 @@ module "vnet" {
   source = "../modules/vnet"
 
   vnet_name           = var.vnet_name
-  resource_group_name = var.resource_group_name
-  location            = local.location
+  resource_group_name = azurerm_resource_group.main.name
+  location            = azurerm_resource_group.main.location
   address_space       = var.vnet_address_space
   tags                = local.common_tags
 

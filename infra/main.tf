@@ -106,6 +106,7 @@ module "jumpbox" {
   admin_username      = var.jumpbox_admin_username
   admin_password      = var.jumpbox_admin_password
   aks_cluster_id      = module.aks.cluster_id
+  assign_aks_role     = true
 
   tags = local.common_tags
 }

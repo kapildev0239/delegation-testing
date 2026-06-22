@@ -85,9 +85,11 @@ resource "azurerm_linux_virtual_machine" "main" {
   }
 }
 
-# Allow the jump box identity to pull AKS admin/user credentials and reach the cluster
+# Allow the jump box identity to pull AKS admin/user credentials and reach the cluster.
+# count is driven by a static bool (not the cluster id) so it stays computable at plan
+# time even when the cluster is being replaced and its id is "known after apply".
 resource "azurerm_role_assignment" "aks_user" {
-  count                = var.aks_cluster_id != null ? 1 : 0
+  count                = var.assign_aks_role ? 1 : 0
   principal_id         = azurerm_linux_virtual_machine.main.identity[0].principal_id
   role_definition_name = "Azure Kubernetes Service Cluster User Role"
   scope                = var.aks_cluster_id

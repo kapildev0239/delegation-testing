@@ -37,9 +37,15 @@ variable "admin_password" {
 }
 
 variable "aks_cluster_id" {
-  description = "Resource ID of the AKS cluster to grant the VM identity access to (null to skip)"
+  description = "Resource ID of the AKS cluster to grant the VM identity access to"
   type        = string
   default     = null
+}
+
+variable "assign_aks_role" {
+  description = "Whether to grant the VM identity the AKS Cluster User role on aks_cluster_id"
+  type        = bool
+  default     = false
 }
 
 variable "tags" {

@@ -23,6 +23,9 @@ spec:
       containers:
         - name: sample-app
           image: delegationacr6478945.azurecr.io/sample-app:v1
+          volumeMounts:
+            - name: ips-volume
+              mountPath: /mnt/ips
           ports:
             - containerPort: 80
           resources:
@@ -32,6 +35,10 @@ spec:
             limits:
               cpu: 200m
               memory: 128Mi
+      volumes:
+        - name: ips-volume
+          persistentVolumeClaim:
+            claimName: sample-app-pvc-fileshare
 ---
 apiVersion: v1
 kind: Service

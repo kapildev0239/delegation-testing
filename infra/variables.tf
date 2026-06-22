@@ -96,12 +96,6 @@ variable "worker_node_pool_vm_size" {
   default     = "Standard_D2s_v3"
 }
 
-variable "pod_cidr" {
-  description = "Pod CIDR for Azure CNI overlay (must not overlap VNet)"
-  type        = string
-  default     = "192.168.0.0/16"
-}
-
 variable "service_cidr" {
   description = "Kubernetes service CIDR"
   type        = string

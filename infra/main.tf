@@ -84,7 +84,6 @@ module "aks" {
   system_node_pool_vm_size = var.system_node_pool_vm_size
   worker_node_pool_vm_size = var.worker_node_pool_vm_size
 
-  pod_cidr       = var.pod_cidr
   service_cidr   = var.service_cidr
   dns_service_ip = var.dns_service_ip
 

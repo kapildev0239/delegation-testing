@@ -10,7 +10,7 @@ aks_subnet_name          = "aks-subnet"
 app_gateway_subnet_name  = "appgw-subnet"
 
 # ACR (alphanumeric only, globally unique)
-acr_name = "delegationacr"
+acr_name = "delegationacr6478945"
 
 # App Gateway
 app_gateway_name = "delegation-appgw"

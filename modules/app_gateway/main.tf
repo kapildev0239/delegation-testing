@@ -62,6 +62,11 @@ resource "azurerm_application_gateway" "main" {
     backend_http_settings_name = "default-http-settings"
   }
 
+  ssl_policy {
+    policy_type = "Predefined"
+    policy_name = "AppGwSslPolicy20220101"
+  }
+
   lifecycle {
     # AGIC manages App Gateway config at runtime; ignore drift on these blocks
     # so Terraform does not fight AGIC on every plan.

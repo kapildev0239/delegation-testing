@@ -24,11 +24,6 @@ variable "vnet_name" {
   type        = string
 }
 
-variable "vnet_resource_group_name" {
-  description = "Resource group that holds the VNet (may differ from infra RG)"
-  type        = string
-}
-
 variable "aks_subnet_name" {
   description = "Name of the AKS subnet inside the VNet"
   type        = string

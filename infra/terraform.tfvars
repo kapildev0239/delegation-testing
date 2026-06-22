@@ -1,13 +1,12 @@
 environment         = "dev"
 project_name        = "delegation"
 location            = "eastus"
-resource_group_name = "delegation-infra-rg"
+resource_group_name = "delegation-rg"
 
-# VNet reference – must match what networking/ deployed
-vnet_name                = "bimpay-networking-vnet"
-vnet_resource_group_name = "delegation-rg"
-aks_subnet_name          = "aks-subnet"
-app_gateway_subnet_name  = "appgw-subnet"
+# VNet reference – must match what networking/ deployed (same RG)
+vnet_name               = "bimpay-networking-vnet"
+aks_subnet_name         = "aks-subnet"
+app_gateway_subnet_name = "appgw-subnet"
 
 # ACR (alphanumeric only, globally unique)
 acr_name = "delegationacr6478945"

@@ -120,9 +120,10 @@ variable "jumpbox_admin_username" {
   default     = "azureuser"
 }
 
-variable "jumpbox_ssh_public_key" {
-  description = "SSH public key for the jump box admin user"
+variable "jumpbox_admin_password" {
+  description = "Admin password for the jump box"
   type        = string
+  sensitive   = true
 }
 
 variable "tags" {

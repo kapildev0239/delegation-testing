@@ -82,7 +82,7 @@ module "jumpbox" {
   subnet_id           = data.azurerm_subnet.vm.id
   vm_size             = var.jumpbox_vm_size
   admin_username      = var.jumpbox_admin_username
-  ssh_public_key      = var.jumpbox_ssh_public_key
+  admin_password      = var.jumpbox_admin_password
   aks_cluster_id      = module.aks.cluster_id
 
   tags = local.common_tags

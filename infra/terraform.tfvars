@@ -26,6 +26,12 @@ pod_cidr       = "192.168.0.0/16"
 service_cidr   = "10.1.0.0/16"
 dns_service_ip = "10.1.0.10"
 
+# Jump box (username/password auth)
+jumpbox_name           = "delegation-jumpbox"
+jumpbox_vm_size        = "Standard_D2s_v3"
+jumpbox_admin_username = "azureuser"
+jumpbox_admin_password = "Yellowandblack@26"
+
 cost_center = "DELEGATION"
 department  = "FCBB DES"
 

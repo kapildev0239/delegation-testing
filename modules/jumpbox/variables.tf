@@ -30,9 +30,10 @@ variable "admin_username" {
   default     = "azureuser"
 }
 
-variable "ssh_public_key" {
-  description = "SSH public key for the admin user"
+variable "admin_password" {
+  description = "Admin password for the VM"
   type        = string
+  sensitive   = true
 }
 
 variable "aks_cluster_id" {

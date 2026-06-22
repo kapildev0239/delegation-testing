@@ -54,6 +54,19 @@ variable "app_gateway_name" {
   type        = string
 }
 
+variable "app_gateway_private_ip" {
+  description = "Static private frontend IP for the App Gateway (within the appgw subnet)"
+  type        = string
+  default     = "10.0.5.10"
+}
+
+# Private DNS zone for app hostnames
+variable "app_dns_zone_name" {
+  description = "Name of the private DNS zone for app hostnames"
+  type        = string
+  default     = "delegation.net"
+}
+
 # AKS
 variable "aks_cluster_name" {
   description = "Name of the AKS cluster"

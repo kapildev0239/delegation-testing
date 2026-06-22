@@ -8,6 +8,16 @@ output "acr_login_server" {
   value       = module.acr.login_server
 }
 
+output "app_gateway_private_ip" {
+  description = "Private frontend IP of the App Gateway (point sample.delegation.net A record here)"
+  value       = module.app_gateway.private_ip_address
+}
+
+output "app_dns_zone_name" {
+  description = "Private DNS zone name for app hostnames"
+  value       = azurerm_private_dns_zone.app.name
+}
+
 output "app_gateway_public_ip" {
   description = "Public IP of the Application Gateway"
   value       = module.app_gateway.public_ip_address

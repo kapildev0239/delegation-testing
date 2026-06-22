@@ -18,6 +18,11 @@ variable "subnet_id" {
   type        = string
 }
 
+variable "private_ip_address" {
+  description = "Static private IP for the App Gateway private frontend (must be free, within the appgw subnet)"
+  type        = string
+}
+
 variable "tags" {
   description = "Tags to apply to resources"
   type        = map(string)

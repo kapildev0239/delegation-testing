@@ -34,6 +34,15 @@ resource "azurerm_application_gateway" "main" {
     public_ip_address_id = azurerm_public_ip.main.id
   }
 
+  # Private frontend so AGIC can expose ingresses on an internal VNet IP.
+  # Reachable from within the VNet (and via the private DNS zone).
+  frontend_ip_configuration {
+    name                          = "private-frontend"
+    subnet_id                     = var.subnet_id
+    private_ip_address            = var.private_ip_address
+    private_ip_address_allocation = "Static"
+  }
+
   backend_address_pool {
     name = "default-backend"
   }

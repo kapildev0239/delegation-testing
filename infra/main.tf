@@ -29,6 +29,28 @@ data "azurerm_subnet" "vm" {
   resource_group_name  = var.resource_group_name
 }
 
+data "azurerm_virtual_network" "main" {
+  name                = var.vnet_name
+  resource_group_name = var.resource_group_name
+}
+
+# Private DNS zone for app hostnames (e.g. sample.delegation.net -> App Gateway private IP).
+# Records are managed manually; linked to the VNet so the VM/laptop-over-VPN can resolve.
+resource "azurerm_private_dns_zone" "app" {
+  name                = var.app_dns_zone_name
+  resource_group_name = data.azurerm_resource_group.main.name
+  tags                = local.common_tags
+}
+
+resource "azurerm_private_dns_zone_virtual_network_link" "app" {
+  name                  = "${var.app_dns_zone_name}-vnet-link"
+  resource_group_name   = data.azurerm_resource_group.main.name
+  private_dns_zone_name = azurerm_private_dns_zone.app.name
+  virtual_network_id    = data.azurerm_virtual_network.main.id
+  registration_enabled  = false
+  tags                  = local.common_tags
+}
+
 module "acr" {
   source = "../modules/acr"
 
@@ -45,6 +67,7 @@ module "app_gateway" {
   resource_group_name = data.azurerm_resource_group.main.name
   location            = data.azurerm_resource_group.main.location
   subnet_id           = data.azurerm_subnet.app_gateway.id
+  private_ip_address  = var.app_gateway_private_ip
   tags                = local.common_tags
 }
 

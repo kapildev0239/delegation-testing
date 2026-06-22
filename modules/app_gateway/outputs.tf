@@ -12,3 +12,8 @@ output "public_ip_address" {
   description = "Public IP address of the Application Gateway"
   value       = azurerm_public_ip.main.ip_address
 }
+
+output "private_ip_address" {
+  description = "Private frontend IP of the Application Gateway"
+  value       = var.private_ip_address
+}

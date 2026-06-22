@@ -1,0 +1,37 @@
+name: Bootstrap - TF State Storage (run once)
+
+on:
+  workflow_dispatch:
+
+env:
+  TF_VERSION: "1.8.5"
+  WORKING_DIR: "./bootstrap"
+
+jobs:
+  bootstrap:
+    name: Create TF State Storage
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Parse ACR_CREDENTIALS and set ARM env vars
+        run: |
+          echo "ARM_CLIENT_ID=$(echo '${{ secrets.ACR_CREDENTIALS }}' | jq -r '.clientId')" >> $GITHUB_ENV
+          echo "ARM_CLIENT_SECRET=$(echo '${{ secrets.ACR_CREDENTIALS }}' | jq -r '.clientSecret')" >> $GITHUB_ENV
+          echo "ARM_TENANT_ID=$(echo '${{ secrets.ACR_CREDENTIALS }}' | jq -r '.tenantId')" >> $GITHUB_ENV
+          echo "ARM_SUBSCRIPTION_ID=4214fd24-e1dc-40be-a56d-da2a07fc058a" >> $GITHUB_ENV
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Terraform Init
+        working-directory: ${{ env.WORKING_DIR }}
+        run: terraform init -input=false
+
+      - name: Terraform Apply
+        working-directory: ${{ env.WORKING_DIR }}
+        run: terraform apply -auto-approve -input=false

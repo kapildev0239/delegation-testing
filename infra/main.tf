@@ -1,3 +1,9 @@
+# Import the RG if it was created outside of this state (e.g. from a prior failed apply).
+import {
+  to = azurerm_resource_group.main
+  id = "/subscriptions/4214fd24-e1dc-40be-a56d-da2a07fc058a/resourceGroups/delegation-infra-rg"
+}
+
 resource "azurerm_resource_group" "main" {
   name     = var.resource_group_name
   location = var.location

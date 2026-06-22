@@ -22,12 +22,15 @@ resource "azurerm_kubernetes_cluster" "main" {
     }
   }
 
-  # Classic Azure CNI: pods get real, routable VNet IPs from the node subnet
-  # (aks-subnet). Required so AGIC / App Gateway can reach pod IPs directly.
+  # Azure CNI Overlay (matches the working production config). network_policy
+  # = azure for pod network policy support.
   network_profile {
-    network_plugin = "azure"
-    service_cidr   = var.service_cidr
-    dns_service_ip = var.dns_service_ip
+    network_plugin      = "azure"
+    network_plugin_mode = "overlay"
+    network_policy      = "azure"
+    service_cidr        = var.service_cidr
+    dns_service_ip      = var.dns_service_ip
+    pod_cidr            = var.pod_cidr
   }
 
   identity {

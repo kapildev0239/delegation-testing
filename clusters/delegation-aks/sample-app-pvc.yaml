@@ -1,0 +1,41 @@
+# Dynamic Azure File StorageClass for sample-app (same pattern as ips-bulk in ips-fluxcd-dev).
+# CSI driver auto-provisions a Storage Account in the AKS-managed RG
+# (MC_delegation-rg_delegation-aks_*) using the public service endpoint.
+#
+# StorageClass.parameters is immutable. To change parameters later, rename
+# this SC + the PVC's storageClassName, do not edit in place.
+#
+# After the PVC binds the first time, pin it to the provisioned PV by setting
+# spec.volumeName to the PV name (kubectl get pv). Removing volumeName later
+# causes CSI to provision a new file share.
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: azurefile-csi-sample-app
+provisioner: file.csi.azure.com
+parameters:
+  skuName: Standard_LRS
+  tags: "environment=dev,project=delegation,CostCenter=DELEGATION,Department=FCBB DES,Created by=DevOps"
+reclaimPolicy: Retain
+volumeBindingMode: Immediate
+allowVolumeExpansion: true
+mountOptions:
+  - actimeo=30
+  - mfsymlinks
+  - nosharesock
+  - nobrl
+  - hard
+  - echo_interval=60
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: sample-app-pvc-fileshare
+  namespace: sample-app
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: azurefile-csi-sample-app
+  resources:
+    requests:
+      storage: 5Gi

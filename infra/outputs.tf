@@ -1,7 +1,7 @@
-output "resource_group_name" {
-  description = "Resource group name"
-  value       = azurerm_resource_group.main.name
-}
+# output "resource_group_name" {
+#   description = "Resource group name"
+#   value       = azurerm_resource_group.main.name
+# }
 
 output "acr_login_server" {
   description = "ACR login server URL"

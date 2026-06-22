@@ -24,6 +24,11 @@ output "aks_oidc_issuer_url" {
 }
 
 output "jumpbox_private_ip" {
-  description = "Private IP of the jump box VM (reach via Bastion/VPN, then run az aks get-credentials)"
+  description = "Private IP of the jump box VM"
   value       = module.jumpbox.private_ip_address
+}
+
+output "jumpbox_public_ip" {
+  description = "Public IP of the jump box VM (SSH: ssh azureuser@<this-ip>)"
+  value       = module.jumpbox.public_ip_address
 }

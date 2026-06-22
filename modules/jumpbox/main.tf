@@ -1,3 +1,32 @@
+resource "azurerm_public_ip" "main" {
+  name                = "${var.name}-pip"
+  resource_group_name = var.resource_group_name
+  location            = var.location
+  allocation_method   = "Static"
+  sku                 = "Standard"
+  tags                = var.tags
+}
+
+# NSG allowing inbound SSH (port 22) from anywhere
+resource "azurerm_network_security_group" "main" {
+  name                = "${var.name}-nsg"
+  resource_group_name = var.resource_group_name
+  location            = var.location
+  tags                = var.tags
+
+  security_rule {
+    name                       = "Allow-SSH"
+    priority                   = 1000
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "22"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+}
+
 resource "azurerm_network_interface" "main" {
   name                = "${var.name}-nic"
   resource_group_name = var.resource_group_name
@@ -8,8 +37,13 @@ resource "azurerm_network_interface" "main" {
     name                          = "internal"
     subnet_id                     = var.subnet_id
     private_ip_address_allocation = "Dynamic"
-    # No public IP: private-only jump box. Reach it via Bastion or VPN.
+    public_ip_address_id          = azurerm_public_ip.main.id
   }
+}
+
+resource "azurerm_network_interface_security_group_association" "main" {
+  network_interface_id      = azurerm_network_interface.main.id
+  network_security_group_id = azurerm_network_security_group.main.id
 }
 
 resource "azurerm_linux_virtual_machine" "main" {

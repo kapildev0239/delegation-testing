@@ -9,6 +9,7 @@ on:
       - 'modules/aks/**'
       - 'modules/acr/**'
       - 'modules/app_gateway/**'
+      - 'modules/jumpbox/**'
       - '.github/workflows/infra-deploy.yml'
   pull_request:
     branches:
@@ -18,12 +19,15 @@ on:
       - 'modules/aks/**'
       - 'modules/acr/**'
       - 'modules/app_gateway/**'
+      - 'modules/jumpbox/**'
       - '.github/workflows/infra-deploy.yml'
   workflow_dispatch:
 
 env:
   TF_VERSION: "1.8.5"
   WORKING_DIR: "./infra"
+  # SSH public key for the jump box, supplied as a repo secret
+  TF_VAR_jumpbox_ssh_public_key: ${{ secrets.JUMPBOX_SSH_PUBLIC_KEY }}
 
 jobs:
   terraform-plan:

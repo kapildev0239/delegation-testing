@@ -22,3 +22,8 @@ output "aks_oidc_issuer_url" {
   description = "OIDC issuer URL (for workload identity federation)"
   value       = module.aks.oidc_issuer_url
 }
+
+output "jumpbox_private_ip" {
+  description = "Private IP of the jump box VM (reach via Bastion/VPN, then run az aks get-credentials)"
+  value       = module.jumpbox.private_ip_address
+}

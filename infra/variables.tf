@@ -36,6 +36,12 @@ variable "app_gateway_subnet_name" {
   default     = "appgw-subnet"
 }
 
+variable "vm_subnet_name" {
+  description = "Name of the VM subnet inside the VNet"
+  type        = string
+  default     = "vm-subnet"
+}
+
 # ACR
 variable "acr_name" {
   description = "Name of the Azure Container Registry (alphanumeric, globally unique)"
@@ -93,6 +99,30 @@ variable "dns_service_ip" {
   description = "Cluster DNS service IP (within service_cidr)"
   type        = string
   default     = "10.1.0.10"
+}
+
+# Jump box
+variable "jumpbox_name" {
+  description = "Name of the jump box VM"
+  type        = string
+  default     = "delegation-jumpbox"
+}
+
+variable "jumpbox_vm_size" {
+  description = "VM size for the jump box"
+  type        = string
+  default     = "Standard_D2s_v3"
+}
+
+variable "jumpbox_admin_username" {
+  description = "Admin username for the jump box"
+  type        = string
+  default     = "azureuser"
+}
+
+variable "jumpbox_ssh_public_key" {
+  description = "SSH public key for the jump box admin user"
+  type        = string
 }
 
 variable "tags" {

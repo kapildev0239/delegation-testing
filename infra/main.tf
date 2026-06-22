@@ -23,6 +23,12 @@ data "azurerm_subnet" "app_gateway" {
   resource_group_name  = var.resource_group_name
 }
 
+data "azurerm_subnet" "vm" {
+  name                 = var.vm_subnet_name
+  virtual_network_name = var.vnet_name
+  resource_group_name  = var.resource_group_name
+}
+
 module "acr" {
   source = "../modules/acr"
 
@@ -62,6 +68,22 @@ module "aks" {
   app_gateway_id                = module.app_gateway.app_gateway_id
   app_gateway_resource_group_id = data.azurerm_resource_group.main.id
   acr_id                        = module.acr.acr_id
+
+  tags = local.common_tags
+}
+
+# Jump box in the vm-subnet to reach the private AKS API server
+module "jumpbox" {
+  source = "../modules/jumpbox"
+
+  name                = var.jumpbox_name
+  resource_group_name = data.azurerm_resource_group.main.name
+  location            = data.azurerm_resource_group.main.location
+  subnet_id           = data.azurerm_subnet.vm.id
+  vm_size             = var.jumpbox_vm_size
+  admin_username      = var.jumpbox_admin_username
+  ssh_public_key      = var.jumpbox_ssh_public_key
+  aks_cluster_id      = module.aks.cluster_id
 
   tags = local.common_tags
 }

@@ -36,7 +36,7 @@ spec:
   accessModes:
     - ReadWriteMany
   storageClassName: azurefile-csi-sample-app
-  # volumeName: pvc-85aa2c43-3f26-40d7-9a7e-0db6cc473a50 # DO NOT REMOVE - binds to existing fileshare, removing causes new fileshare provisioning
+  volumeName: pvc-87b26621-cb60-456f-9877-f97fcc5aec8c # DO NOT REMOVE - binds to existing fileshare, removing causes new fileshare provisioning
   resources:
     requests:
       storage: 5Gi
